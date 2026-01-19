@@ -4,11 +4,11 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {View, StyleSheet, Platform} from 'react-native';
 // import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import {HomeScreen} from '../screens/HomeScreen';
-import {DronesScreen} from '../screens/DronesScreen';
-import {MissionsScreen} from '../screens/MissionsScreen';
-import {AlertScreen} from '../screens/AlertScreen';
-import {ProfileScreen} from '../screens/ProfileScreen';
+import {HomeScreen} from '../screens/home';
+import {DronesScreen} from '../screens/drones';
+import {MissionsScreen} from '../screens/missions';
+import {AlertsScreen} from '../screens/alerts';
+import {ProfileScreen} from '../screens/profile';
 
 const Tab = createBottomTabNavigator();
 
@@ -66,7 +66,7 @@ export const BottomTabNavigator = () => {
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Drones" component={DronesScreen} />
       <Tab.Screen name="Missions" component={MissionsScreen} />
-      <Tab.Screen name="Alert" component={AlertScreen} />
+      <Tab.Screen name="Alert" component={AlertsScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
   );
