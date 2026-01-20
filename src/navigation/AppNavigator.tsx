@@ -18,6 +18,13 @@ export const AppNavigator = () => {
 
   useEffect(() => {
     checkAuthentication();
+
+    // Check auth status every second to detect login/logout
+    const interval = setInterval(() => {
+      checkAuthentication();
+    }, 1000);
+
+    return () => clearInterval(interval);
   }, []);
 
   const checkAuthentication = async () => {
