@@ -9,10 +9,12 @@ import {
   Platform,
   ScrollView,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {Logo} from '../../components/common/Logo';
+import {authService} from '../../services/authService';
 
 export const SignUpScreen = ({navigation}: any) => {
   const [fullName, setFullName] = useState('');
@@ -22,9 +24,14 @@ export const SignUpScreen = ({navigation}: any) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSignUp = () => {
-    // TODO: Implement sign up logic
+  const handleSignUp = async () => {
+    // Validation
+    if (!fullName || !email || !password || !confirmPassword) {
+      Alert.alert('Error', 'Please fill in all fields');
+      return;
+    }
     if (!agreedToTerms) {
       Alert.alert('Error', 'Please agree to Terms & Conditions and Privacy Policy');
       return;
@@ -33,7 +40,28 @@ export const SignUpScreen = ({navigation}: any) => {
       Alert.alert('Error', 'Passwords do not match');
       return;
     }
-    console.log('Sign Up:', {fullName, email, password});
+    if (password.length < 8) {
+      Alert.alert('Error', 'Password must be at least 8 characters long');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      await authService.register({
+        name: fullName,
+        email,
+        password,
+      });
+      // Navigation will happen automatically when AppNavigator detects the token
+    } catch (error: any) {
+      console.error('Sign up error:', error);
+      Alert.alert(
+        'Sign Up Failed',
+        error?.response?.data?.message || error?.message || 'Unable to create account. Please try again.'
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleGoogleSignUp = () => {
@@ -178,9 +206,14 @@ export const SignUpScreen = ({navigation}: any) => {
 
           {/* Create Account Button */}
           <TouchableOpacity
-            style={styles.createAccountButton}
-            onPress={handleSignUp}>
-            <Text style={styles.createAccountButtonText}>Create Account</Text>
+            style={[styles.createAccountButton, isLoading && styles.createAccountButtonDisabled]}
+            onPress={handleSignUp}
+            disabled={isLoading}>
+            {isLoading ? (
+              <ActivityIndicator color="#FFFFFF" />
+            ) : (
+              <Text style={styles.createAccountButtonText}>Create Account</Text>
+            )}
           </TouchableOpacity>
 
           {/* Divider */}
@@ -324,6 +357,10 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 4,
     marginBottom: 24,
+  },
+  createAccountButtonDisabled: {
+    backgroundColor: '#9CA3AF',
+    shadowOpacity: 0.1,
   },
   createAccountButtonText: {
     color: '#FFFFFF',
