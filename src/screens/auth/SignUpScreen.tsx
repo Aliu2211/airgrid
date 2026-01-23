@@ -14,7 +14,7 @@ import {
 import {SafeAreaView} from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {Logo} from '../../components/common/Logo';
-import {authService} from '../../services/authService';
+import {saveToken, saveUserData} from '../../services/storageService';
 
 export const SignUpScreen = ({navigation}: any) => {
   const [fullName, setFullName] = useState('');
@@ -47,17 +47,24 @@ export const SignUpScreen = ({navigation}: any) => {
 
     setIsLoading(true);
     try {
-      await authService.register({
+      // DEVELOPMENT MODE: Bypass backend and save mock token
+      const mockToken = 'dev-token-' + Date.now();
+      const mockUser = {
+        id: '1',
+        email: email,
         name: fullName,
-        email,
-        password,
-      });
+        role: 'user',
+      };
+      
+      await saveToken(mockToken);
+      await saveUserData(mockUser);
+      
       // Navigation will happen automatically when AppNavigator detects the token
     } catch (error: any) {
       console.error('Sign up error:', error);
       Alert.alert(
         'Sign Up Failed',
-        error?.response?.data?.message || error?.message || 'Unable to create account. Please try again.'
+        'Unable to save credentials. Please try again.'
       );
     } finally {
       setIsLoading(false);
