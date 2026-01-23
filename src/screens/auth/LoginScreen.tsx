@@ -14,7 +14,7 @@ import {
 import {SafeAreaView} from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {Logo} from '../../components/common/Logo';
-import {authService} from '../../services/authService';
+import {saveToken, saveUserData} from '../../services/storageService';
 
 export const LoginScreen = ({navigation}: any) => {
   const [email, setEmail] = useState('');
@@ -30,13 +30,24 @@ export const LoginScreen = ({navigation}: any) => {
 
     setIsLoading(true);
     try {
-      await authService.login({email, password});
+      // DEVELOPMENT MODE: Bypass backend and save mock token
+      const mockToken = 'dev-token-' + Date.now();
+      const mockUser = {
+        id: '1',
+        email: email,
+        name: email.split('@')[0],
+        role: 'user',
+      };
+      
+      await saveToken(mockToken);
+      await saveUserData(mockUser);
+      
       // Navigation will happen automatically when AppNavigator detects the token
     } catch (error: any) {
       console.error('Login error:', error);
       Alert.alert(
         'Login Failed',
-        error?.response?.data?.message || error?.message || 'Invalid email or password. Please try again.'
+        'Unable to save credentials. Please try again.'
       );
     } finally {
       setIsLoading(false);
