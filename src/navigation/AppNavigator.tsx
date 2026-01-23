@@ -3,8 +3,6 @@ import {View, ActivityIndicator, StyleSheet} from 'react-native';
 import {AuthNavigator} from './AuthNavigator';
 import {MainNavigator} from './MainNavigator';
 import {getToken} from '../services/storageService';
-import {storageService} from '../services/storageService';
-import {STORAGE_KEYS} from '../config/constants';
 import {colors} from '../config/theme';
 
 /**
@@ -49,16 +47,7 @@ export const AppNavigator = () => {
 
   // Show AuthNavigator (includes Onboarding) for unauthenticated users
   // Show MainNavigator for authenticated users
-  // For development: Toggle between the two by commenting/uncommenting
-
-  // Production mode:
-  // return isAuthenticated ? <MainNavigator /> : <AuthNavigator />;
-
-  // Development mode - Show onboarding/auth flow (for testing)
-  return <AuthNavigator />;
-
-  // Development mode - Skip to main app (for testing)
-  // return <MainNavigator />;
+  return isAuthenticated ? <MainNavigator /> : <AuthNavigator />;
 };
 
 const styles = StyleSheet.create({
